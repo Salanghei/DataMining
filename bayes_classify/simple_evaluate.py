@@ -4,7 +4,7 @@
 @author: zhaoyang
 @license: (C) Copyright 2001-2019 Python Software Foundation. All rights reserved.
 @contact: 1805453683@qq.com
-@file: train.py
+@file: simple_evaluate.py
 @time: 2019/11/18 16:00
 """
 import bayes_classify.pre_process_method as pre
@@ -20,11 +20,11 @@ for i in range(len(vocabulary_list)):
     vocabulary_list_txt.write(vocabulary_list[i] + '\t')
 vocabulary_list_txt.flush()
 vocabulary_list_txt.close()
-print("词库生成完成\n")
+print("词库生成完毕\n")
 
 print("正在生成词矩阵......")
 words_matrix = pre.create_words_matrix(vocabulary_list, sms_words_list)
-print("词矩阵生成完成\n")
+print("词矩阵生成完毕\n")
 
 print("正在计算概率......")
 p_spam, p_word_spam, p_word_nonspam = bayes.get_probability(words_matrix, class_category)
@@ -33,4 +33,31 @@ np.savetxt("p_word_nonspam.txt", p_word_nonspam, delimiter='\t')
 p_spam_txt = open("p_spam.txt", 'w')
 p_spam_txt.write(p_spam.__str__())
 p_spam_txt.close()
-print("概率计算完成\n")
+print("概率计算完毕\n")
+
+print("正在生成测试集词矩阵......")
+test_data_file = "../data/test_data.txt"
+test_words_list, test_class_category = pre.load_sms_data(test_data_file)
+test_words_matrix = pre.create_words_matrix(vocabulary_list, test_words_list)
+print("测试集词矩阵生成完毕\n")
+
+print("正在执行测试......")
+class_result = bayes.classify(test_words_matrix, p_spam, p_word_spam, p_word_nonspam)
+tp = 0.0
+fp = 0.0
+fn = 0.0
+tn = 0.0
+for i in range(len(class_result)):
+    if test_class_category[i] == 1 & class_result[i] == 1:
+        tp += 1
+    elif test_class_category[i] == 0 & class_result[i] == 0:
+        tn += 1
+    elif test_class_category[i] == 1 & class_result[i] == 0:
+        fp += 1
+    else:
+        fn += 1
+precision = tp / (tp + fp)
+recall = tp / (tp + fn)
+accuracy = (tp + tn) / len(class_result)
+print("测试完毕\n")
+print("precision = ", precision, ", recall = ", recall, ", accuracy = ", accuracy)
