@@ -12,6 +12,7 @@ import numpy as np
 from sklearn import svm
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
 
 print("正在加载并处理训练数据......")
 data_file = "../data/train_data.txt"
@@ -46,3 +47,4 @@ print("模型评估完成\n")
 print('Test accuracy = ', svc.score(test_words_matrix, test_class_category))
 print('precision = ', precision_score(test_class_category, test_predict, average='macro'))
 print('recall = ', recall_score(test_class_category, test_predict, average='macro'))
+print('f1 = ', f1_score(test_class_category, test_predict, average='macro'))

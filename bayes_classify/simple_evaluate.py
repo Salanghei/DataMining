@@ -12,6 +12,7 @@ import bayes_classify.bayes_method as bayes
 import numpy as np
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
 
 print("正在生成词库......")
 train_data_file = "../data/train_data.txt"
@@ -52,5 +53,6 @@ for i in range(len(class_result)):
 accuracy = correct / len(class_result)
 precision = precision_score(test_class_category, class_result, average='macro')
 recall = recall_score(test_class_category, class_result, average='macro')
+f1 = f1_score(test_class_category, class_result, average='macro')
 print("测试完毕\n")
-print("accuracy = ", accuracy, ", precision = ", precision, ", recall = ", recall)
+print("accuracy = ", accuracy, ", precision = ", precision, ", recall = ", recall, ", f1 = ", f1)
