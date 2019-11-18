@@ -28,16 +28,20 @@ index_list = [random.randint(0, num_lines) for _ in range(num_lines)]    # 随�
 index_list = set(index_list)         # 去重
 train_words_matrix = []              # 用于训练的单词矩阵
 test_words_matrix = []               # 用于测试的单词矩阵
+train_class_category = []            # 用于训练的类别标签
+test_class_category = []             # 用于测试的类别标签
 for i in range(len(words_matrix)):
     if i in index_list:
         train_words_matrix.append(words_matrix[i])
+        train_class_category.append(class_category[i])
     else:
         test_words_matrix.append(words_matrix[i])
+        test_class_category.append(class_category[i])
 print("数据划分完毕\n")
 print("训练集样本数量：", len(train_words_matrix), ", 测试集样本数量：", len(test_words_matrix), "\n")
 
 print("正在计算概率p(s)，p(wi|s)，p(wi|ns)......")
-p_spam, p_word_spam, p_word_nonspam = bayes.get_probability(train_words_matrix, class_category)
+p_spam, p_word_spam, p_word_nonspam = bayes.get_probability(train_words_matrix, train_class_category)
 print("概率计算完毕\n")
 
 print("正在进行测试......")
@@ -47,11 +51,11 @@ fp = 0.0
 fn = 0.0
 tn = 0.0
 for i in range(len(class_result)):
-    if class_result[i] == 1 & class_category[i] == 1:
+    if test_class_category[i] == 1 & class_result[i] == 1:
         tp += 1
-    elif class_result[i] == 0 & class_category[i] == 0:
+    elif test_class_category[i] == 0 & class_result[i] == 0:
         tn += 1
-    elif class_result[i] == 1 & class_category[i] == 0:
+    elif test_class_category[i] == 1 & class_result[i] == 0:
         fp += 1
     else:
         fn += 1

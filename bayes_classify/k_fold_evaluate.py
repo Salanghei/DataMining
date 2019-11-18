@@ -32,7 +32,11 @@ for i in range(k):
     train_words_matrix = words_matrix[: i * fold_len]                     # 用于训练的单词矩阵
     train_words_matrix.extend(words_matrix[(i + 1) * fold_len:])
 
-    p_spam, p_word_spam, p_word_nonspam = bayes.get_probability(train_words_matrix, class_category)
+    test_class_category = class_category[i * fold_len: (i + 1) * fold_len]    # 用于测试的类别标签
+    train_class_category = class_category[: i * fold_len]                     # 用于训练的类别标签
+    train_class_category.extend(class_category[(i + 1) * fold_len:])
+
+    p_spam, p_word_spam, p_word_nonspam = bayes.get_probability(train_words_matrix, train_class_category)
 
     class_result = bayes.classify(test_words_matrix, p_spam, p_word_spam, p_word_nonspam)
     tp = 0.0
@@ -40,11 +44,11 @@ for i in range(k):
     fn = 0.0
     tn = 0.0
     for j in range(len(class_result)):
-        if class_result[j] == 1 & class_category[j] == 1:
+        if class_result[j] == 1 & test_class_category[j] == 1:
             tp += 1
-        elif class_result[j] == 0 & class_category[j] == 0:
+        elif class_result[j] == 0 & test_class_category[j] == 0:
             tn += 1
-        elif class_result[j] == 1 & class_category[j] == 0:
+        elif class_result[j] == 1 & test_class_category[j] == 0:
             fp += 1
         else:
             fn += 1
