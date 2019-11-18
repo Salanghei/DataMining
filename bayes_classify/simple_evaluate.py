@@ -10,6 +10,8 @@
 import bayes_classify.pre_process_method as pre
 import bayes_classify.bayes_method as bayes
 import numpy as np
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
 
 print("正在生成词库......")
 train_data_file = "../data/train_data.txt"
@@ -22,9 +24,9 @@ vocabulary_list_txt.flush()
 vocabulary_list_txt.close()
 print("词库生成完毕\n")
 
-print("正在生成词矩阵......")
+print("正在生成训练集词矩阵......")
 words_matrix = pre.create_words_matrix(vocabulary_list, sms_words_list)
-print("词矩阵生成完毕\n")
+print("训练集词矩阵生成完毕\n")
 
 print("正在计算概率......")
 p_spam, p_word_spam, p_word_nonspam = bayes.get_probability(words_matrix, class_category)
@@ -43,21 +45,12 @@ print("测试集词矩阵生成完毕\n")
 
 print("正在执行测试......")
 class_result = bayes.classify(test_words_matrix, p_spam, p_word_spam, p_word_nonspam)
-tp = 0.0
-fp = 0.0
-fn = 0.0
-tn = 0.0
+correct = 0.0
 for i in range(len(class_result)):
-    if test_class_category[i] == 1 & class_result[i] == 1:
-        tp += 1
-    elif test_class_category[i] == 0 & class_result[i] == 0:
-        tn += 1
-    elif test_class_category[i] == 1 & class_result[i] == 0:
-        fp += 1
-    else:
-        fn += 1
-precision = tp / (tp + fp)
-recall = tp / (tp + fn)
-accuracy = (tp + tn) / len(class_result)
+    if test_class_category[i] == class_result[i]:
+        correct += 1
+accuracy = correct / len(class_result)
+precision = precision_score(test_class_category, class_result, average='macro')
+recall = recall_score(test_class_category, class_result, average='macro')
 print("测试完毕\n")
-print("precision = ", precision, ", recall = ", recall, ", accuracy = ", accuracy)
+print("accuracy = ", accuracy, ", precision = ", precision, ", recall = ", recall)
