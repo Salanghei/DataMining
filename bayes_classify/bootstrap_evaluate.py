@@ -13,6 +13,8 @@ import random
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
+from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
 
 print("正在加载数据，生成词库......")
 data_file = "../data/data.txt"
@@ -59,3 +61,13 @@ recall = recall_score(test_class_category, class_result, average='macro')
 f1 = f1_score(test_class_category, class_result, average='macro')
 print("测试完毕\n")
 print("precision = ", precision, ", recall = ", recall, ", accuracy = ", accuracy, ", f1 = ", f1)
+
+p_test_spam_list = bayes.classify_probability(test_words_matrix, p_spam, p_word_spam, p_word_nonspam)
+fpr, tpr, threshold = roc_curve(test_class_category, p_test_spam_list)    # 计算真阳性率和假阳性率
+roc_auc = auc(fpr, tpr)
+plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)            # 绘制ROC曲线
+plt.plot([0, 1], [0, 1], linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.legend()
+plt.show()

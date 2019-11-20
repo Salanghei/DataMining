@@ -13,6 +13,8 @@ from sklearn import svm
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
+from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
 
 times = 40    # 词库中单词在垃圾邮件中出现的总次数 >= 40
 
@@ -57,3 +59,13 @@ recall = recall_score(test_class_category, test_predict, average='macro')
 f1 = f1_score(test_class_category, test_predict, average='macro')
 print("模型评估完成\n")
 print("Test accuracy = ", precision, ", recall = ", recall, ", accuracy = ", accuracy, ", f1 = ", f1)
+
+p_list = svc.decision_function(test_words_matrix)
+fpr, tpr, threshold = roc_curve(test_class_category, p_list)      # 计算真阳性率和假阳性率
+roc_auc = auc(fpr, tpr)
+plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)    # 绘制ROC曲线
+plt.plot([0, 1], [0, 1], linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.legend()
+plt.show()
