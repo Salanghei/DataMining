@@ -33,11 +33,12 @@ for i in range(len(times_range)):
     print("正在执行第", i + 1, "次训练及测试，词库中单词在垃圾邮件中出现的总次数 >= ", times_range[i], "......")
     vocabulary_list = pre.create_vocabulary_list(spam_words_list, times_range[i])
     words_matrix = pre.create_words_matrix(vocabulary_list, sms_words_list)
+    print("词库中包含", len(vocabulary_list), "个单词")
 
     svc = svm.SVC(gamma='auto')
     svc.fit(words_matrix, class_category)
 
-    #print('Training accuracy = ', svc.score(words_matrix, class_category))
+    # print('Training accuracy = ', svc.score(words_matrix, class_category))
     test_words_matrix = pre.create_words_matrix(vocabulary_list, test_words_list)
 
     test_predict = svc.predict(test_words_matrix)

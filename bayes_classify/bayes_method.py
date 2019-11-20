@@ -18,14 +18,13 @@ def get_probability(words_matrix, class_category):
     :return: p(s)，p(wi|s)，p(wi|ns)
     """
     num_lines = len(words_matrix)        # 行数，即邮件数
-    num_words = len(words_matrix[0])     # 单词总数
+    num_words = len(words_matrix[0])     # 单词数目
 
     p_spam = sum(class_category) / float(num_lines)    # 垃圾邮件的先验概率p(s)
 
     num_words_in_spam = np.ones(num_words)        # 统计垃圾邮件中每个单词出现的次数，初始化为1
     num_words_in_nonspam = np.ones(num_words)     # 统计非垃圾邮件中每个单词出现的次数，初始化为1
-    num_class = 2.0                               # 类别数量，即垃圾邮件、非垃圾邮件
-
+    num_class = 2.0                               # 类别个数
     sum_words_in_spam = num_class                 # 垃圾邮件中出现的单词的总个数
     sum_words_in_nonspam = num_class              # 非垃圾邮件中出现的单词的总个数
 
@@ -68,8 +67,8 @@ def classify(test_words_matrix, p_spam, p_word_spam, p_word_nonspam):
     :param p_word_nonspam: 单词在非垃圾邮件中出现的概率p(wi|ns)
     :return: 分类结果
     """
-    p_test_spam_list = sum(test_words_matrix * p_word_spam) + np.log(p_spam)
-    p_test_nonspam_list = sum(test_words_matrix * p_word_nonspam) + np.log(1 - p_spam)
+    p_test_spam_list = np.dot(test_words_matrix, p_word_spam) + np.log(p_spam)
+    p_test_nonspam_list = np.dot(test_words_matrix, p_word_nonspam) + np.log(1 - p_spam)
     class_result = []
     for i in range(len(test_words_matrix)):
         if p_test_spam_list[i] > p_test_nonspam_list[i]:
@@ -77,4 +76,3 @@ def classify(test_words_matrix, p_spam, p_word_spam, p_word_nonspam):
         else:
             class_result.append(0)
     return class_result
-
