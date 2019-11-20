@@ -37,6 +37,7 @@ def get_probability(words_matrix, class_category):
             num_words_in_nonspam += words_matrix[i]
             sum_words_in_nonspam += sum(words_matrix[i])
 
+    # 为了避免下溢出（当所有的p都很小时，再相乘会得到0.0，使用log则会避免得到0.0）
     p_word_spam = np.log(num_words_in_spam / sum_words_in_spam)            # 垃圾邮件中每个单词出现的概率，即p(wi|s)
     p_word_nonspam = np.log(num_words_in_nonspam / sum_words_in_nonspam)   # 非垃圾邮件中每个单词出现的概率，即p(wi|ns)
     return p_spam, p_word_spam, p_word_nonspam

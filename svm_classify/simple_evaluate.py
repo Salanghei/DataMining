@@ -8,43 +8,55 @@
 @time: 2019/11/18 22:01
 """
 import svm_classify.pre_process_method as pre
-import numpy as np
 from sklearn import svm
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
+import matplotlib.pyplot as plt
 
-print("正在加载并处理训练数据......")
+times_range = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]    # 词库中单词在垃圾邮件中出现的总次数列表
+
+print("正在加载并处理数据......")
 data_file = "../data/train_data.txt"
 sms_words_list, class_category = pre.load_sms_data(data_file)
 spam_words_list = pre.get_spam_words_list(sms_words_list, class_category)
-vocabulary_list = pre.create_vocabulary_list(spam_words_list)
-words_matrix = pre.create_words_matrix(vocabulary_list, sms_words_list)
-print("训练数据处理完成\n")
 
-words_matrix = np.array(words_matrix)        # words_matrix转换为适合svm输入的格式
-class_category = np.array(class_category)    # class_category转换为适合svm输入的格式
-
-print("正在进行模型训练......")
-svc = svm.SVC(gamma='auto')
-svc.fit(words_matrix, class_category)
-print("模型训练完成\n")
-print('Training accuracy = ', svc.score(words_matrix, class_category), '\n')
-
-print("正在加载并处理测试数据......")
 test_file = "../data/test_data.txt"
 test_words_list, test_class_category = pre.load_sms_data(test_file)
-test_words_matrix = pre.create_words_matrix(vocabulary_list, test_words_list)
-print("测试数据处理完成\n")
+print("数据处理完成\n")
 
-test_words_matrix = np.array(test_words_matrix)
-test_class_category = np.array(test_class_category)
+precision = []
+recall = []
+accuracy = []
+f1 = []
+for i in range(len(times_range)):
+    print("正在执行第", i + 1, "次训练及测试，词库中单词在垃圾邮件中出现的总次数 >= ", times_range[i], "......")
+    vocabulary_list = pre.create_vocabulary_list(spam_words_list, times_range[i])
+    words_matrix = pre.create_words_matrix(vocabulary_list, sms_words_list)
 
-print("正在进行模型评估......")
-test_predict = svc.predict(test_words_matrix)
-print("模型评估完成\n")
+    svc = svm.SVC(gamma='auto')
+    svc.fit(words_matrix, class_category)
 
-print('Test accuracy = ', svc.score(test_words_matrix, test_class_category))
-print('precision = ', precision_score(test_class_category, test_predict, average='macro'))
-print('recall = ', recall_score(test_class_category, test_predict, average='macro'))
-print('f1 = ', f1_score(test_class_category, test_predict, average='macro'))
+    #print('Training accuracy = ', svc.score(words_matrix, class_category))
+    test_words_matrix = pre.create_words_matrix(vocabulary_list, test_words_list)
+
+    test_predict = svc.predict(test_words_matrix)
+    accuracy_i = svc.score(test_words_matrix, test_class_category)
+    precision_i = precision_score(test_class_category, test_predict, average='macro')
+    recall_i = recall_score(test_class_category, test_predict, average='macro')
+    f1_i = f1_score(test_class_category, test_predict, average='macro')
+    accuracy.append(accuracy_i)
+    precision.append(precision_i)
+    recall.append(recall_i)
+    f1.append(f1_i)
+    print("precision(", i + 1, ") = ", precision_i, ", recall(", i + 1, ") = ", recall_i,
+          ", accuracy(", i + 1, ") = ", accuracy_i, ", f1(", i + 1, ") = ", f1_i)
+print("\n模型评估完毕")
+
+x_axis = times_range
+plt.plot(x_axis, accuracy, label='accuracy')
+plt.plot(x_axis, precision, label='precision')
+plt.plot(x_axis, recall, label='recall')
+plt.plot(x_axis, f1, label='f1')
+plt.legend()
+plt.show()

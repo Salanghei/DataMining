@@ -58,17 +58,18 @@ def get_spam_words_list(sms_words_list, class_category):
     return spam_words_list
 
 
-def create_vocabulary_list(spam_words_list):
+def create_vocabulary_list(spam_words_list, times):
     """
-    创建词库，词库中单词为在垃圾邮件中出现5次以上的单词
+    创建词库，词库中单词为在垃圾邮件中出现times次以上的单词
     :param spam_words_list: 垃圾邮件中的单词
     :return: 词库
     """
     spam_words_list = pd.DataFrame(spam_words_list)
+    # 计算每个单词在垃圾邮件中出现的总次数
     num_spam_words = spam_words_list.apply(pd.value_counts).apply(lambda x: x.sum(), axis=1)
     vocabulary_list = []
     for index, value in num_spam_words.iteritems():
-        if value >= 5:
+        if value >= times:    # 将出现times次以上的单词记录在词库中
             vocabulary_list.append(index)
     return vocabulary_list
 
