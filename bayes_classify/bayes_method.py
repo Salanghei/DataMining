@@ -24,9 +24,8 @@ def get_probability(words_matrix, class_category):
 
     num_words_in_spam = np.ones(num_words)        # 统计垃圾邮件中每个单词出现的次数，初始化为1
     num_words_in_nonspam = np.ones(num_words)     # 统计非垃圾邮件中每个单词出现的次数，初始化为1
-    num_class = 2.0                               # 类别个数
-    sum_words_in_spam = num_class                 # 垃圾邮件中出现的单词的总个数
-    sum_words_in_nonspam = num_class              # 非垃圾邮件中出现的单词的总个数
+    sum_words_in_spam = num_words                 # 垃圾邮件中出现的单词的总个数
+    sum_words_in_nonspam = num_words              # 非垃圾邮件中出现的单词的总个数
 
     for i in range(num_lines):
         if class_category[i] == 1:    # 如果是垃圾邮件
