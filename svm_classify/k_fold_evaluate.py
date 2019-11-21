@@ -13,7 +13,7 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 
-times = 40    # 词库中单词在垃圾邮件中出现的总次数 >= 40
+times = 20    # 词库中单词在垃圾邮件中出现的总次数 >= 20
 
 print("正在加载并处理数据......")
 data_file = "../data/data.txt"

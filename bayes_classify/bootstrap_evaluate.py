@@ -16,6 +16,7 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
+# 使用自定义的贝叶斯分类方法实现垃圾邮件分类
 print("正在加载数据，生成词库......")
 data_file = "../data/data.txt"
 sms_words_list, class_category = pre.load_sms_data(data_file)
@@ -27,8 +28,8 @@ words_matrix = pre.create_words_matrix(vocabulary_list, sms_words_list)  # 词�
 print("词矩阵生成完成\n")
 
 print("正在使用bootstrap方法对数据进行划分......")
-num_lines = len(words_matrix)      # 行数
-num_words = len(words_matrix[0])   # 单词数
+num_lines = len(words_matrix)        # 行数
+num_words = len(words_matrix[0])     # 单词数
 index_list = [random.randint(0, num_lines) for _ in range(num_lines)]    # 随机生成num_lines个数
 index_list = set(index_list)         # 去重
 train_words_matrix = []              # 用于训练的单词矩阵
@@ -62,10 +63,10 @@ f1 = f1_score(test_class_category, class_result, average='macro')
 print("测试完毕\n")
 print("precision = ", precision, ", recall = ", recall, ", accuracy = ", accuracy, ", f1 = ", f1)
 
-p_test_spam_list = bayes.classify_probability(test_words_matrix, p_spam, p_word_spam, p_word_nonspam)
-fpr, tpr, threshold = roc_curve(test_class_category, p_test_spam_list)    # 计算真阳性率和假阳性率
+p_list = bayes.classify_probability(test_words_matrix, p_spam, p_word_spam)
+fpr, tpr, threshold = roc_curve(test_class_category, p_list)      # 计算真阳性率和假阳性率
 roc_auc = auc(fpr, tpr)
-plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)            # 绘制ROC曲线
+plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)    # 绘制ROC曲线
 plt.plot([0, 1], [0, 1], linestyle='--')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')

@@ -15,6 +15,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
+# 使用python自带的贝叶斯库实现垃圾邮件分类
 print("正在生成词库......")
 train_data_file = "../data/train_data.txt"
 sms_words_list, class_category = pre.load_sms_data(train_data_file)
@@ -50,7 +51,7 @@ f1 = f1_score(test_class_category, class_result, average='macro')
 print("测试完毕\n")
 print("accuracy = ", accuracy, ", precision = ", precision, ", recall = ", recall, ", f1 = ", f1)
 
-p_list = module.predict_proba(test_words_matrix)[:, 1]
+p_list = module.predict_log_proba(test_words_matrix)[:, 1]
 fpr, tpr, threshold = roc_curve(test_class_category, p_list)      # 计算真阳性率和假阳性率
 roc_auc = auc(fpr, tpr)
 plt.plot(fpr, tpr, label='ROC curve (area = %0.3f)' % roc_auc)    # 绘制ROC曲线

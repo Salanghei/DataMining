@@ -12,8 +12,10 @@ from sklearn import svm
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
+from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
+# 选出最合适的阈值，作为词库中单词在垃圾邮件中出现的最少次数
 times_range = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]    # 词库中单词在垃圾邮件中出现的总次数列表
 
 print("正在加载并处理数据......")
@@ -52,8 +54,20 @@ for i in range(len(times_range)):
     f1.append(f1_i)
     print("precision(", i + 1, ") = ", precision_i, ", recall(", i + 1, ") = ", recall_i,
           ", accuracy(", i + 1, ") = ", accuracy_i, ", f1(", i + 1, ") = ", f1_i)
+
+    p_list = svc.decision_function(test_words_matrix)
+    fpr, tpr, threshold = roc_curve(test_class_category, p_list)    # 计算真阳性率和假阳性率
+    roc_auc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, label='{} ROC curve (area = {})'.format(i + 1, roc_auc))  # 绘制ROC曲线
 print("\n模型评估完毕")
 
+plt.plot([0, 1], [0, 1], linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.legend()
+plt.show()
+
+"""
 x_axis = times_range
 plt.plot(x_axis, accuracy, label='accuracy')
 plt.plot(x_axis, precision, label='precision')
@@ -61,3 +75,4 @@ plt.plot(x_axis, recall, label='recall')
 plt.plot(x_axis, f1, label='f1')
 plt.legend()
 plt.show()
+"""

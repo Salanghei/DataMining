@@ -57,7 +57,7 @@ def load_probability(p_spam_file, p_word_spam_file, p_word_nonspam_file):
     return p_spam, p_word_spam, p_word_nonspam
 
 
-def classify_probability(test_words_matrix, p_spam, p_word_spam, p_word_nonspam):
+def classify_probability(test_words_matrix, p_spam, p_word_spam):
     """
     计算联合概率
     :param test_words_matrix: 由测试集得到的词矩阵
@@ -66,9 +66,9 @@ def classify_probability(test_words_matrix, p_spam, p_word_spam, p_word_nonspam)
     :param p_word_nonspam: 单词在非垃圾邮件中出现的概率p(wi|ns)
     :return: 联合概率
     """
-    p_test_spam_list = np.dot(test_words_matrix, p_word_nonspam) + np.log(1 - p_spam)
-    p_test_spam_list = - p_test_spam_list
-    return p_test_spam_list
+    p_list = np.dot(test_words_matrix, p_word_spam) + np.log(1 - p_spam)
+    p_list = 1 - p_list
+    return p_list
 
 
 def classify(test_words_matrix, p_spam, p_word_spam, p_word_nonspam):
