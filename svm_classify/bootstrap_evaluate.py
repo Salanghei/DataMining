@@ -58,7 +58,7 @@ precision = precision_score(test_class_category, test_predict, average='macro')
 recall = recall_score(test_class_category, test_predict, average='macro')
 f1 = f1_score(test_class_category, test_predict, average='macro')
 print("模型评估完成\n")
-print("Test accuracy = ", precision, ", recall = ", recall, ", accuracy = ", accuracy, ", f1 = ", f1)
+print("precision = ", precision, ", recall = ", recall, ", accuracy = ", accuracy, ", f1 = ", f1)
 
 p_list = svc.decision_function(test_words_matrix)
 fpr, tpr, threshold = roc_curve(test_class_category, p_list)      # 计算真阳性率和假阳性率
